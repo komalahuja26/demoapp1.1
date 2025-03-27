@@ -1,0 +1,64 @@
+<h1 class="text-center">{{title}}</h1>
+
+<div class="text-center mb-3">
+  <a href="/shop/add" class="btn btn-info">Add a Book</a>
+</div>
+
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Author</th>
+      <th>Description</th>
+      <th>Price</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each dataset}}
+    <tr>
+      <td>{{this.name}}</td>
+      <td>{{this.author}}</td>
+      <td>{{this.description}}</td>
+      <td>${{this.price}}</td>
+      <td>
+        <a href="/shop/edit/{{this._id}}" class="btn btn-success">Edit</a>
+        <a href="/shop/delete/{{this._id}}" class="btn btn-dark">Delete</a>
+        <div id="paypal-button-container-{{this._id}}" class="mt-2"></div>
+      </td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+
+<script src="https://www.paypal.com/sdk/js?client-id={{PAYPAL_CLIENT_ID}}"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    {{#each dataset}}
+    paypal.Buttons({
+      createOrder: function () {
+        return fetch("/shop/checkout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ bookId: "{{this._id}}" })
+        })
+        .then(res => res.json())
+        .then(data => data.id);
+      },
+      onApprove: function (data) {
+        return fetch(`/shop/capture/${data.orderID}`, {
+          method: "POST"
+        })
+        .then(res => res.json())
+        .then(details => {
+          alert("Transaction completed by " + details.payer.name.given_name);
+        });
+      }
+    }).render("#paypal-button-container-{{this._id}}");
+    {{/each}}
+  });
+</script>

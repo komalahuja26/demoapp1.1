@@ -1,0 +1,26 @@
+<h1 class="text-center">{{title}}</h1>
+
+<form action="/shop/edit/{{book._id}}" method="POST" class="container">
+    <div class="mb-3">
+        <label class="form-label">Book Name:</label>
+        <input type="text" name="name" value="{{book.name}}" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Author:</label>
+        <input type="text" name="author" value="{{book.author}}" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Description:</label>
+        <textarea name="description" class="form-control" required>{{book.description}}</textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Price:</label>
+        <input type="number" name="price" value="{{book.price}}" step="0.01" class="form-control" required>
+    </div>
+
+    <button type="submit" class="btn btn-success">Update Book</button>
+    <a href="/shop" class="btn btn-secondary">Cancel</a>
+</form>
